@@ -16,8 +16,25 @@ app.all('*', function(req,res){
 
 });
 
-//Create the Server
-http.createServer(app).listen(app.get('port'), function()
+
+var server = http.createServer(app);
+var boot = function()
 {
-	console.log('Express server listening on port ' + app.get('port'));
-});
+	server.listen(app.get('port'), function(){
+		console.info('Express server listening on port ' + app.get('port'));
+	});
+}
+var shutdown = function(){
+	server.close();
+}
+
+if(require.main === module){
+	boot();
+}
+else
+{
+	console.info('Running app as a module');
+	exports.boot = boot;
+	exports.shutdown = shutdown;
+	exports.port = app.get('port');
+}
